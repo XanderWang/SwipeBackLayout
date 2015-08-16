@@ -1564,6 +1564,7 @@ public class ViewDragHelper {
     }
 
     private int getEdgeTouched(int x, int y) {
+        /*
         int result = 0;
 
         if (x < mParentView.getLeft() + mEdgeSize)
@@ -1576,5 +1577,36 @@ public class ViewDragHelper {
             result = EDGE_BOTTOM;
 
         return result;
+        */
+        return computeEdgeTouchState(x,y);
     }
+
+    // wangxiaoyang add for compute edge touched
+    private int computeEdgeTouchState( int x, int y ) {
+    	int result = 0;
+    	Rect parentRect = new Rect(mParentView.getLeft(), mParentView.getTop(), 
+    			mParentView.getRight(), mParentView.getBottom());
+    	switch (mTrackingEdges) {
+		case EDGE_LEFT:
+			parentRect.right = parentRect.left + mEdgeSize;
+			break;
+		case EDGE_TOP:
+			parentRect.bottom = parentRect.top + mEdgeSize;
+			break;
+		case EDGE_RIGHT:
+			parentRect.left = parentRect.right - mEdgeSize;
+			break;
+		case EDGE_BOTTOM:
+			parentRect.top = parentRect.bottom - mEdgeSize;
+			break;
+		default:
+			break;
+		}
+    	boolean isInner = ( parentRect.left < x && x < parentRect.right ) && 
+    			( parentRect.top < y && y < parentRect.bottom );
+    	if(isInner) result = mTrackingEdges;
+    	Log.d("wxy", "result = " + result );
+    	return result;
+    }
+
 }
